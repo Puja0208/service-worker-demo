@@ -7,7 +7,19 @@ self.addEventListener("install", (e) => {
   );
 });
 
-self.addEventListener("activate", (e) => {});
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(
+        keyList.map((key) => {
+          if (key !== CACHE_NAME) {
+            return cache.delete(key);
+          }
+        })
+      );
+    })
+  );
+});
 
 self.addEventListener("fetch", (e) => {
   e.respondWith(
