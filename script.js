@@ -1,5 +1,5 @@
 console.log("Hello!");
-//check if servie
+//check if service worker prresent and register it
 if (navigator.serviceWorker) {
   navigator.serviceWorker
     .register("./sw.js")
