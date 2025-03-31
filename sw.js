@@ -1,6 +1,7 @@
+const CACHE_NAME = "demo-v1";
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open("demo-v1").then((cache) => {
+    caches.open(CACHE_NAME).then((cache) => {
       cache.addAll(["./index.html", "./styles.css", "./script.js"]);
     })
   );
@@ -8,4 +9,20 @@ self.addEventListener("install", (e) => {
 
 self.addEventListener("activate", (e) => {});
 
-self.addEventListener("fetch", (e) => {});
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    fetch(e.request)
+      .then((res) => {
+        const cloneData = res.clone();
+        //update cache
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, cloneData);
+        });
+
+        return res;
+      })
+      .catch(() => {
+        return caches.match(e.request).then((res) => res);
+      })
+  );
+});
